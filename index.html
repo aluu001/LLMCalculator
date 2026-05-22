@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Pricing Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar for Inputs -->
+        <aside class="sidebar glass-panel">
+            <div class="sidebar-header">
+                <h2>Control Panel</h2>
+                <p>Configure your model</p>
+            </div>
+
+            <div class="input-section-title">Model Selection</div>
+            <div class="input-group">
+                <label for="model-selector">Selected Model</label>
+                <select id="model-selector">
+                    <!-- Populated via JS -->
+                </select>
+            </div>
+
+            <div class="input-section-title">Volume Settings</div>
+            <div class="input-group">
+                <label for="monthly-case-volume">Monthly Case Volume</label>
+                <input type="number" id="monthly-case-volume" value="6000">
+            </div>
+
+            <div class="input-section-title">Overhead Config</div>
+            <div class="input-group">
+                <label for="synthesis-input">Synthesis Input Tokens</label>
+                <input type="number" id="synthesis-input" value="10000">
+            </div>
+            <div class="input-group">
+                <label for="synthesis-output">Synthesis Output Tokens</label>
+                <input type="number" id="synthesis-output" value="4000">
+            </div>
+            <div class="input-group">
+                <label for="infra-cost">Infrastructure Cost (%)</label>
+                <input type="number" id="infra-cost" value="20" min="0" max="100">
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Tabs -->
+            <nav class="tabs-nav glass-panel">
+                <button class="tab-btn active" data-tab="dashboard-tab">Executive Dashboard</button>
+                <button class="tab-btn" data-tab="data-tab">Data & Analysis</button>
+            </nav>
+
+            <!-- Dashboard Tab Content -->
+            <div id="dashboard-tab" class="tab-pane active">
+                <div class="metric-cards">
+                    <div class="card glass-panel highlight-card">
+                        <h3>Total Monthly Cost</h3>
+                        <div class="value highlight-value" id="total-monthly-cost">$0.00</div>
+                    </div>
+                    <div class="card glass-panel">
+                        <h3>Cost Per Case</h3>
+                        <div class="value" id="cost-per-case">$0.00</div>
+                    </div>
+                    <div class="card glass-panel">
+                        <h3>Annual Projection</h3>
+                        <div class="value" id="annual-projection">$0.00</div>
+                    </div>
+                    <div class="card glass-panel">
+                        <h3>Tokens Per Case</h3>
+                        <div class="value" id="tokens-per-case">0</div>
+                    </div>
+                </div>
+
+                <!-- Charts Area -->
+                <div class="charts-grid">
+                    <div class="chart-box glass-panel">
+                        <h3>Cost Breakdown (Monthly)</h3>
+                        <div class="canvas-wrapper">
+                            <canvas id="costPieChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-box glass-panel">
+                        <h3>Annual Cost Comparison by Model</h3>
+                        <div class="canvas-wrapper">
+                            <canvas id="modelBarChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-box glass-panel full-width">
+                        <h3>Annual Cumulative Cost Projection by Model</h3>
+                        <div class="canvas-wrapper" style="height: 300px;">
+                            <canvas id="cumulativeLineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Tab Content -->
+            <div id="data-tab" class="tab-pane">
+                <div class="data-tables-grid">
+                    <div class="table-card glass-panel">
+                        <h3>Model Comparison</h3>
+                        <div class="table-responsive">
+                            <table id="model-comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Model</th>
+                                        <th>Input $/1M</th>
+                                        <th>Output $/1M</th>
+                                        <th>Est. Monthly Cost</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="table-card glass-panel">
+                        <h3>Category Token Usage</h3>
+                        <div class="table-responsive">
+                            <table id="category-usage-table">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Agents</th>
+                                        <th>Total Tokens</th>
+                                        <th>% of Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
