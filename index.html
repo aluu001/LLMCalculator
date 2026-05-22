@@ -61,6 +61,7 @@
             <nav class="tabs-nav glass-panel">
                 <button class="tab-btn active" data-tab="dashboard-tab">Executive Command Center</button>
                 <button class="tab-btn" data-tab="data-tab">Data</button>
+                <button class="tab-btn" data-tab="methodology-tab">Methodology</button>
             </nav>
 
             <!-- Dashboard Tab Content -->
@@ -213,6 +214,53 @@
                                 </thead>
                                 <tbody></tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Methodology Tab Content -->
+            <div id="methodology-tab" class="tab-pane">
+                <div class="data-tables-grid">
+                    <div class="table-card glass-panel">
+                        <h3>1. Token Volume Calculus</h3>
+                        <p style="margin-bottom: 16px; color: var(--text-secondary); font-weight: 500;">Calculates the total tokens processed per case based on base agent usage and synthesis overhead.</p>
+                        <div class="math-formula">
+                            <div><span class="var-blue">Total Input Tokens</span> = (Base Tokens * 0.85) + <span class="var-magenta">Synthesis Input</span></div>
+                            <div><span class="var-blue">Total Output Tokens</span> = (Base Tokens * 0.15) + <span class="var-yellow">Synthesis Output</span></div>
+                        </div>
+                    </div>
+
+                    <div class="table-card glass-panel">
+                        <h3>2. On-Demand Economics (Variable Cost)</h3>
+                        <p style="margin-bottom: 16px; color: var(--text-secondary); font-weight: 500;">Calculates the fully loaded pay-as-you-go cost including infrastructure overhead.</p>
+                        <div class="math-formula">
+                            <div><span class="var-magenta">Input Cost</span> = (<span class="var-blue">Total Input</span> / 1M) * Provider Input Rate * <span class="var-green">Monthly Volume</span></div>
+                            <div><span class="var-yellow">Output Cost</span> = (<span class="var-blue">Total Output</span> / 1M) * Provider Output Rate * <span class="var-green">Monthly Volume</span></div>
+                            <div><span class="var-blue">Base Model Cost</span> = <span class="var-magenta">Input Cost</span> + <span class="var-yellow">Output Cost</span></div>
+                            <div><span class="var-red">Infra Overhead</span> = <span class="var-blue">Base Model Cost</span> * Infra Burden %</div>
+                            <br>
+                            <div><span class="var-green" style="font-weight: 800;">Total Monthly Cost</span> = <span class="var-blue">Base Model Cost</span> + <span class="var-red">Infra Overhead</span></div>
+                        </div>
+                    </div>
+
+                    <div class="table-card glass-panel">
+                        <h3>3. Hosted Economics (Fixed Cost)</h3>
+                        <p style="margin-bottom: 16px; color: var(--text-secondary); font-weight: 500;">Calculates the dedicated server flat-rate costs assuming 100% uptime.</p>
+                        <div class="math-formula">
+                            <div><span class="var-blue">Compute Cost</span> = Hardware Rate/min * 43,200 min/mo</div>
+                            <br>
+                            <div><span class="var-magenta" style="font-weight: 800;">Total Fixed Cost</span> = <span class="var-blue">Compute Cost</span> + Storage Cost</div>
+                        </div>
+                    </div>
+
+                    <div class="table-card glass-panel">
+                        <h3>4. Break-Even Intersection</h3>
+                        <p style="margin-bottom: 16px; color: var(--text-secondary); font-weight: 500;">Calculates the exact volume threshold where building becomes cheaper than buying.</p>
+                        <div class="math-formula">
+                            <div><span class="var-blue">Cost Per Case</span> = <span class="var-green">Total On-Demand Monthly Cost</span> / <span class="var-green">Monthly Volume</span></div>
+                            <br>
+                            <div><span class="var-yellow" style="font-weight: 800;">Break-Even Volume</span> = <span class="var-magenta">Total Hosted Fixed Cost</span> / <span class="var-blue">Cost Per Case</span></div>
                         </div>
                     </div>
                 </div>

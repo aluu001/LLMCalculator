@@ -369,6 +369,24 @@ td {
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: rgba(0, 160, 202, 0.03); color: var(--pcg-blue); }
 
+/* Math Formatting for Methodology Tab */
+.math-formula {
+    background: rgba(11, 54, 119, 0.03);
+    border-radius: 8px;
+    padding: 20px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    border-left: 4px solid var(--pcg-blue);
+    overflow-x: auto;
+}
+.var-blue { color: var(--pcg-blue); font-weight: 600; }
+.var-magenta { color: var(--pcg-magenta); font-weight: 600; }
+.var-yellow { color: #d97706; font-weight: 600; } 
+.var-green { color: #059669; font-weight: 600; } 
+.var-red { color: var(--pcg-candy-red); font-weight: 600; }
+
 @media (max-width: 1200px) {
     .metric-hero { grid-template-columns: repeat(2, 1fr); }
     .charts-grid-secondary { grid-template-columns: 1fr; }
