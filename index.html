@@ -3,38 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Pricing Calculator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>LLM ROI Command Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar for Inputs -->
+        <!-- Sidebar Command Panel -->
         <aside class="sidebar glass-panel">
             <div class="sidebar-header">
-                <h2>Control Panel</h2>
-                <p>Configure models & volume</p>
+                <h2>ROI Settings</h2>
+                <p>Configure models & parameters</p>
             </div>
 
-            <div class="input-section-title">Model Selection</div>
+            <div class="input-section-title">Analysis Mode</div>
+            <div class="mode-toggle">
+                <button class="mode-btn active" id="mode-compare">Compare</button>
+                <button class="mode-btn" id="mode-single">Single Model</button>
+            </div>
+
+            <div class="input-section-title">Build vs Buy Models</div>
             <div class="input-group">
-                <label for="model-selector">On-Demand Model</label>
+                <label for="model-selector">On-Demand Strategy (Buy)</label>
                 <select id="model-selector"></select>
             </div>
-            
-            <div class="input-group">
-                <label for="hosted-selector">Hosted Model (Comparison)</label>
+            <div class="input-group compare-only">
+                <label for="hosted-selector">Hosted Strategy (Build)</label>
                 <select id="hosted-selector"></select>
             </div>
 
-            <div class="input-section-title">Volume Settings</div>
+            <div class="input-section-title">Scale Settings</div>
             <div class="input-group">
                 <label for="monthly-case-volume">Monthly Case Volume</label>
                 <input type="number" id="monthly-case-volume" value="6000">
             </div>
 
-            <div class="input-section-title">Overhead Config</div>
+            <div class="input-section-title">Overhead Configuration</div>
             <div class="input-group">
                 <label for="synthesis-input">Synthesis Input Tokens</label>
                 <input type="number" id="synthesis-input" value="10000">
@@ -44,7 +50,7 @@
                 <input type="number" id="synthesis-output" value="4000">
             </div>
             <div class="input-group">
-                <label for="infra-cost">Infrastructure Cost (%)</label>
+                <label for="infra-cost">Infrastructure Burden (%)</label>
                 <input type="number" id="infra-cost" value="20" min="0" max="100">
             </div>
         </aside>
@@ -53,111 +59,108 @@
         <main class="main-content">
             <!-- Tabs -->
             <nav class="tabs-nav glass-panel">
-                <button class="tab-btn active" data-tab="dashboard-tab">Executive Dashboard</button>
-                <button class="tab-btn" data-tab="hosted-tab">Hosted vs On-Demand</button>
+                <button class="tab-btn active" data-tab="dashboard-tab">Executive Command Center</button>
                 <button class="tab-btn" data-tab="data-tab">Data & Analysis</button>
             </nav>
 
             <!-- Dashboard Tab Content -->
             <div id="dashboard-tab" class="tab-pane active">
-                <div class="metric-cards">
-                    <div class="card glass-panel highlight-card">
-                        <h3>Total Monthly Cost</h3>
-                        <div class="value highlight-value" id="total-monthly-cost">$0</div>
+                
+                <!-- Recommendation Banner (Moved to top) -->
+                <div class="recommendation-banner glass-panel flex-center compare-only" id="recommendation-badge">
+                    RECOMMENDATION: USE ON-DEMAND
+                </div>
+
+                <!-- Hero Metrics (Compare Mode) -->
+                <div class="metric-hero compare-only">
+                    <div class="card glass-panel hero-card on-demand-card">
+                        <div class="hero-label">On-Demand Cost (Buy)</div>
+                        <div class="hero-value" id="ondemand-annual-cost">$0</div>
+                        <div class="hero-subtext" id="ondemand-monthly-cost">($0 / month)</div>
                     </div>
-                    <div class="card glass-panel">
-                        <h3>Cost Per Case</h3>
-                        <div class="value" id="cost-per-case">$0</div>
+                    
+                    <div class="card glass-panel hero-card hosted-card">
+                        <div class="hero-label">Hosted Cost (Build)</div>
+                        <div class="hero-value" id="hosted-annual-cost">$0</div>
+                        <div class="hero-subtext" id="hosted-monthly-cost">($0 / month)</div>
                     </div>
-                    <div class="card glass-panel">
-                        <h3>Annual Projection</h3>
-                        <div class="value" id="annual-projection">$0</div>
+                    
+                    <div class="card glass-panel hero-card savings-card">
+                        <div class="hero-label">Annual Savings</div>
+                        <div class="hero-value highlight-value" id="annual-savings">$0</div>
+                        <div class="hero-subtext highlight-value" id="savings-percent">0% margin improvement</div>
                     </div>
-                    <div class="card glass-panel">
-                        <h3>Tokens Per Case</h3>
-                        <div class="value" id="tokens-per-case">0</div>
+                    
+                    <div class="card glass-panel hero-card breakeven-card">
+                        <div class="hero-label">Break-Even Volume</div>
+                        <div class="hero-value highlight-value" id="breakeven-volume-stat">0</div>
+                        <div class="hero-subtext" id="utilization-text">0% Current Utilization</div>
                     </div>
                 </div>
 
-                <div class="charts-grid">
+                <!-- Hero Metrics (Single Mode) -->
+                <div class="metric-hero single-only" style="display: none;">
+                    <div class="card glass-panel hero-card on-demand-card">
+                        <div class="hero-label">Total Annual Cost</div>
+                        <div class="hero-value" id="single-annual-cost">$0</div>
+                        <div class="hero-subtext">Estimated Projections</div>
+                    </div>
+                    <div class="card glass-panel hero-card">
+                        <div class="hero-label">Monthly Cost</div>
+                        <div class="hero-value" id="single-monthly-cost">$0</div>
+                        <div class="hero-subtext">Operating Expense</div>
+                    </div>
+                    <div class="card glass-panel hero-card">
+                        <div class="hero-label">Cost per Case</div>
+                        <div class="hero-value" id="single-cost-per-case">$0</div>
+                        <div class="hero-subtext">Unit Economics</div>
+                    </div>
+                    <div class="card glass-panel hero-card">
+                        <div class="hero-label">Monthly Volume</div>
+                        <div class="hero-value highlight-value" id="single-volume">0</div>
+                        <div class="hero-subtext">Cases Processed</div>
+                    </div>
+                </div>
+
+                <!-- Secondary Charts (Moved above matrix) -->
+                <div class="charts-grid-secondary">
                     <div class="chart-box glass-panel">
-                        <h3>Cost Breakdown (Monthly)</h3>
+                        <h3>On-Demand Cost Breakdown</h3>
                         <div class="canvas-wrapper">
                             <canvas id="costPieChart"></canvas>
                         </div>
                     </div>
+                    <div class="chart-box glass-panel compare-only">
+                        <h3 style="margin-bottom: 10px;">Strategy Radar</h3>
+                        <div class="canvas-wrapper" style="height: 380px;">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                    </div>
                     <div class="chart-box glass-panel">
-                        <h3>Annual Cost Comparison by Model</h3>
-                        <div class="canvas-wrapper">
-                            <canvas id="modelBarChart"></canvas>
+                        <h3 style="margin-bottom: 10px;">Category Bloom</h3>
+                        <div class="canvas-wrapper" style="height: 380px;">
+                            <canvas id="polarChart"></canvas>
                         </div>
-                    </div>
-                    <div class="chart-box glass-panel full-width">
-                        <h3>Annual Cumulative Cost Projection</h3>
-                        <div class="canvas-wrapper" style="height: 300px;">
-                            <canvas id="cumulativeLineChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Hosted vs On-Demand Tab Content -->
-            <div id="hosted-tab" class="tab-pane">
-                <div class="metric-cards">
-                    <div class="card glass-panel highlight-card">
-                        <h3>Hosted Monthly Cost</h3>
-                        <div class="value highlight-value" id="hosted-monthly-cost">$0</div>
-                    </div>
-                    <div class="card glass-panel highlight-card">
-                        <h3>On-Demand Monthly</h3>
-                        <div class="value highlight-value" id="ondemand-monthly-cost">$0</div>
-                    </div>
-                    <div class="card glass-panel savings-card">
-                        <h3>Monthly Savings</h3>
-                        <div class="value highlight-value" id="monthly-savings">$0</div>
-                    </div>
-                    <div class="card glass-panel savings-card">
-                        <h3>Savings %</h3>
-                        <div class="value highlight-value" id="savings-percent">0%</div>
                     </div>
                 </div>
 
-                <div class="charts-grid">
-                    <div class="chart-box glass-panel">
-                        <h3>Cost Comparison (Hosted vs On-Demand)</h3>
-                        <div class="canvas-wrapper">
-                            <canvas id="hostedComparisonChart"></canvas>
-                        </div>
+                <!-- Master Visualization (Moved to bottom, taller) -->
+                <div class="chart-box glass-panel full-width main-viz-box compare-only">
+                    <div class="viz-header">
+                        <h3>Break-Even Strategy Matrix</h3>
                     </div>
-                    
-                    <div class="chart-box glass-panel flex-center">
-                        <div class="utilization-widget">
-                            <h3>Break-Even Analysis</h3>
-                            <div class="gauge-container">
-                                <div class="gauge-fill" id="utilization-fill"></div>
-                                <div class="gauge-text" id="utilization-text">0% Utilized</div>
-                            </div>
-                            <div class="utilization-stats">
-                                <div>
-                                    <span class="label">Current Volume:</span>
-                                    <span class="stat-val" id="current-volume-stat">0</span>
-                                </div>
-                                <div>
-                                    <span class="label">Break-Even Vol:</span>
-                                    <span class="stat-val" id="breakeven-volume-stat">0</span>
-                                </div>
-                            </div>
-                            <div class="recommendation-badge" id="recommendation-badge">ON-DEMAND</div>
-                        </div>
+                    <div class="canvas-wrapper" style="height: 700px;">
+                        <canvas id="intersectionChart"></canvas>
                     </div>
                 </div>
+
             </div>
 
             <!-- Data Tab Content -->
             <div id="data-tab" class="tab-pane">
                 <div class="data-tables-grid">
                     <div class="table-card glass-panel">
-                        <h3>Model Comparison</h3>
+                        <h3>On-Demand Model Matrix</h3>
                         <div class="table-responsive">
                             <table id="model-comparison-table">
                                 <thead>
@@ -172,9 +175,26 @@
                             </table>
                         </div>
                     </div>
+
+                    <div class="table-card glass-panel">
+                        <h3>Hosted Model Fixed Costs</h3>
+                        <div class="table-responsive">
+                            <table id="hosted-comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Model</th>
+                                        <th>Cost per Minute</th>
+                                        <th>Storage Cost</th>
+                                        <th>Est. Monthly Fixed Cost</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
                     
                     <div class="table-card glass-panel">
-                        <h3>Category Token Usage</h3>
+                        <h3>Categorical Token Distribution</h3>
                         <div class="table-responsive">
                             <table id="category-usage-table">
                                 <thead>
