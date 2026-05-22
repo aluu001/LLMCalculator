@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agent Pricing Calculator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -14,15 +14,18 @@
         <aside class="sidebar glass-panel">
             <div class="sidebar-header">
                 <h2>Control Panel</h2>
-                <p>Configure your model</p>
+                <p>Configure models & volume</p>
             </div>
 
             <div class="input-section-title">Model Selection</div>
             <div class="input-group">
-                <label for="model-selector">Selected Model</label>
-                <select id="model-selector">
-                    <!-- Populated via JS -->
-                </select>
+                <label for="model-selector">On-Demand Model</label>
+                <select id="model-selector"></select>
+            </div>
+            
+            <div class="input-group">
+                <label for="hosted-selector">Hosted Model (Comparison)</label>
+                <select id="hosted-selector"></select>
             </div>
 
             <div class="input-section-title">Volume Settings</div>
@@ -51,6 +54,7 @@
             <!-- Tabs -->
             <nav class="tabs-nav glass-panel">
                 <button class="tab-btn active" data-tab="dashboard-tab">Executive Dashboard</button>
+                <button class="tab-btn" data-tab="hosted-tab">Hosted vs On-Demand</button>
                 <button class="tab-btn" data-tab="data-tab">Data & Analysis</button>
             </nav>
 
@@ -59,15 +63,15 @@
                 <div class="metric-cards">
                     <div class="card glass-panel highlight-card">
                         <h3>Total Monthly Cost</h3>
-                        <div class="value highlight-value" id="total-monthly-cost">$0.00</div>
+                        <div class="value highlight-value" id="total-monthly-cost">$0</div>
                     </div>
                     <div class="card glass-panel">
                         <h3>Cost Per Case</h3>
-                        <div class="value" id="cost-per-case">$0.00</div>
+                        <div class="value" id="cost-per-case">$0</div>
                     </div>
                     <div class="card glass-panel">
                         <h3>Annual Projection</h3>
-                        <div class="value" id="annual-projection">$0.00</div>
+                        <div class="value" id="annual-projection">$0</div>
                     </div>
                     <div class="card glass-panel">
                         <h3>Tokens Per Case</h3>
@@ -75,7 +79,6 @@
                     </div>
                 </div>
 
-                <!-- Charts Area -->
                 <div class="charts-grid">
                     <div class="chart-box glass-panel">
                         <h3>Cost Breakdown (Monthly)</h3>
@@ -90,9 +93,61 @@
                         </div>
                     </div>
                     <div class="chart-box glass-panel full-width">
-                        <h3>Annual Cumulative Cost Projection by Model</h3>
+                        <h3>Annual Cumulative Cost Projection</h3>
                         <div class="canvas-wrapper" style="height: 300px;">
                             <canvas id="cumulativeLineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hosted vs On-Demand Tab Content -->
+            <div id="hosted-tab" class="tab-pane">
+                <div class="metric-cards">
+                    <div class="card glass-panel highlight-card">
+                        <h3>Hosted Monthly Cost</h3>
+                        <div class="value highlight-value" id="hosted-monthly-cost">$0</div>
+                    </div>
+                    <div class="card glass-panel highlight-card">
+                        <h3>On-Demand Monthly</h3>
+                        <div class="value highlight-value" id="ondemand-monthly-cost">$0</div>
+                    </div>
+                    <div class="card glass-panel savings-card">
+                        <h3>Monthly Savings</h3>
+                        <div class="value highlight-value" id="monthly-savings">$0</div>
+                    </div>
+                    <div class="card glass-panel savings-card">
+                        <h3>Savings %</h3>
+                        <div class="value highlight-value" id="savings-percent">0%</div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-box glass-panel">
+                        <h3>Cost Comparison (Hosted vs On-Demand)</h3>
+                        <div class="canvas-wrapper">
+                            <canvas id="hostedComparisonChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-box glass-panel flex-center">
+                        <div class="utilization-widget">
+                            <h3>Break-Even Analysis</h3>
+                            <div class="gauge-container">
+                                <div class="gauge-fill" id="utilization-fill"></div>
+                                <div class="gauge-text" id="utilization-text">0% Utilized</div>
+                            </div>
+                            <div class="utilization-stats">
+                                <div>
+                                    <span class="label">Current Volume:</span>
+                                    <span class="stat-val" id="current-volume-stat">0</span>
+                                </div>
+                                <div>
+                                    <span class="label">Break-Even Vol:</span>
+                                    <span class="stat-val" id="breakeven-volume-stat">0</span>
+                                </div>
+                            </div>
+                            <div class="recommendation-badge" id="recommendation-badge">ON-DEMAND</div>
                         </div>
                     </div>
                 </div>
@@ -113,9 +168,7 @@
                                         <th>Est. Monthly Cost</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <!-- Populated via JS -->
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
@@ -132,9 +185,7 @@
                                         <th>% of Total</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <!-- Populated via JS -->
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>

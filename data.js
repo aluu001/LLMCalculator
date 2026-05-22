@@ -12,6 +12,14 @@ const calculatorData = {
         { name: "Mistral Large", inputCost: 4, outputCost: 12, provider: "Mistral" },
         { name: "Command R+", inputCost: 3, outputCost: 15, provider: "Cohere" }
     ],
+    hostedModels: [
+        { name: "OpenAI", costPerMin: 0.1433, storageCost: 1.95 },
+        { name: "Llama", costPerMin: 0.05718, storageCost: 1.95 },
+        { name: "Mistral", costPerMin: 0.05718, storageCost: 1.95 },
+        { name: "Mixtral", costPerMin: 0.05718, storageCost: 1.95 },
+        { name: "Flan", costPerMin: 0.05718, storageCost: 1.95 },
+        { name: "Qwen", costPerMin: 0.05718, storageCost: 1.95 }
+    ],
     categories: [
         { name: "Income", agents: 7, totalTokens: 23444 },
         { name: "Non-Financial", agents: 5, totalTokens: 22087 },
