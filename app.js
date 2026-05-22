@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 2. Pie Chart (On-Demand Cost Breakdown)
         pieChart = new Chart(document.getElementById('costPieChart').getContext('2d'), {
-            type: 'doughnut',
+            type: 'pie',
             data: { 
                 labels: ['Input', 'Output', 'Infra'], 
                 datasets: [{ 
@@ -165,7 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 }, 
-                cutout: '65%',
                 layout: { padding: 10 }
             }
         });
@@ -200,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 responsive: true, maintainAspectRatio: false, 
                 plugins: { 
                     datalabels: { display: false },
-                    legend: { position: 'right' } 
+                    legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } 
                 }, 
                 scales: { r: { ticks: { display: false } } } 
             }
