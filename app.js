@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Chart Instances ---
     let intersectionChart, pieChart;
-    let radarChart, polarChart;
+    let radarChart, polarChart, galaxyChart;
 
     // --- Formatting Utils ---
     const formatMoney = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num);
@@ -204,6 +204,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 scales: { r: { ticks: { display: false } } } 
             }
         });
+
+        // 5. LLM Value Constellation (Bubble Chart)
+        galaxyChart = new Chart(document.getElementById('galaxyChart').getContext('2d'), {
+            type: 'bubble',
+            data: { datasets: [] },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'Input Cost per 1M ($)' }, grid: { color: 'rgba(0,0,0,0.03)' } },
+                    y: { title: { display: true, text: 'Output Cost per 1M ($)' }, grid: { color: 'rgba(0,0,0,0.03)' } }
+                },
+                plugins: { 
+                    datalabels: { display: false },
+                    tooltip: { callbacks: { label: (c) => `${c.raw.label}: Input $${c.raw.x}, Output $${c.raw.y}` } },
+                    legend: { display: false }
+                }
+            }
+        });
     }
 
     function getModelCost(model, vol, synIn, synOut, infraPct) {
@@ -299,10 +317,15 @@ document.addEventListener('DOMContentLoaded', () => {
             hostedData.push(hostedMonthlyCost);
         }
 
+        const ctxMatrix = document.getElementById('intersectionChart').getContext('2d');
+        const gradientOnDemand = ctxMatrix.createLinearGradient(0, 0, 0, 400);
+        gradientOnDemand.addColorStop(0, 'rgba(0, 204, 102, 0.4)');
+        gradientOnDemand.addColorStop(1, 'rgba(0, 204, 102, 0.05)');
+        
         intersectionChart.data.labels = labels;
         intersectionChart.data.datasets = [
-            { label: `On-Demand Cost (${selectedModel.name})`, data: onDemandData, borderColor: pcgColors.appleGreen, backgroundColor: 'rgba(0, 204, 102, 0.1)', borderWidth: 3, tension: 0, fill: { target: 1, above: 'rgba(161, 27, 126, 0.2)', below: 'rgba(0, 204, 102, 0.2)' }, pointRadius: 0, pointHitRadius: 10 },
-            { label: `Hosted Fixed Cost (${selectedHosted.name})`, data: hostedData, borderColor: pcgColors.magenta, borderWidth: 3, borderDash: [5, 5], tension: 0, fill: false, pointRadius: 0, pointHitRadius: 10 }
+            { label: `On-Demand Cost (${selectedModel.name})`, data: onDemandData, borderColor: pcgColors.appleGreen, backgroundColor: gradientOnDemand, borderWidth: 4, tension: 0.1, fill: { target: 1, above: 'rgba(161, 27, 126, 0.2)', below: gradientOnDemand }, pointRadius: 0, pointHitRadius: 10 },
+            { label: `Hosted Fixed Cost (${selectedHosted.name})`, data: hostedData, borderColor: pcgColors.magenta, borderWidth: 3, borderDash: [6, 6], tension: 0, fill: false, pointRadius: 0, pointHitRadius: 10 }
         ];
         intersectionChart.update();
 
@@ -314,11 +337,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return { name: m.name, monthly: mMetrics.totalMonthlyCost, annual: mMetrics.totalMonthlyCost * 12, inputRate: m.inputCost, outputRate: m.outputCost };
         });
 
-        // Radar Chart (Normalized data to form a shape)
+        // Radar Chart (Glowing effects)
         const maxMonthly = Math.max(onDemandMonthly, hostedMonthlyCost);
         radarChart.data.datasets = [
-            { label: `On-Demand (${selectedModel.name})`, data: [(onDemandMonthly/maxMonthly)*100, 0, 100, 100], backgroundColor: 'rgba(0, 204, 102, 0.3)', borderColor: pcgColors.appleGreen, borderWidth: 2 },
-            { label: `Hosted (${selectedHosted.name})`, data: [(hostedMonthlyCost/maxMonthly)*100, 100, 0, 0], backgroundColor: 'rgba(161, 27, 126, 0.3)', borderColor: pcgColors.magenta, borderWidth: 2 }
+            { label: `On-Demand (${selectedModel.name})`, data: [(onDemandMonthly/maxMonthly)*100, 0, 100, 100], backgroundColor: 'rgba(0, 204, 102, 0.35)', borderColor: pcgColors.appleGreen, borderWidth: 3, pointBackgroundColor: pcgColors.appleGreen },
+            { label: `Hosted (${selectedHosted.name})`, data: [(hostedMonthlyCost/maxMonthly)*100, 100, 0, 0], backgroundColor: 'rgba(161, 27, 126, 0.35)', borderColor: pcgColors.magenta, borderWidth: 3, pointBackgroundColor: pcgColors.magenta }
         ];
         radarChart.update();
 
@@ -330,6 +353,21 @@ document.addEventListener('DOMContentLoaded', () => {
             return color.replace('rgb', 'rgba').replace(')', ', 0.6)');
         });
         polarChart.update();
+
+        // Value Constellation
+        galaxyChart.data.datasets = allModelCosts.map((m, i) => {
+            let radius = Math.max(8, (m.annual / 8000)); 
+            if(radius > 50) radius = 50; 
+            const isActive = m.name === selectedModel.name;
+            return {
+                label: m.name,
+                data: [{ x: m.inputRate, y: m.outputRate, r: radius, annual: m.annual, label: m.name }],
+                backgroundColor: isActive ? 'rgba(0, 204, 102, 0.8)' : colorPalette[i % colorPalette.length].replace('rgb', 'rgba').replace(')', ', 0.5)'),
+                borderColor: isActive ? '#ffffff' : colorPalette[i % colorPalette.length],
+                borderWidth: isActive ? 3 : 1
+            };
+        });
+        galaxyChart.update();
 
         // --- Data Tables ---
         tables.modelComparison.innerHTML = '';

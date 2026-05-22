@@ -122,35 +122,41 @@
                     </div>
                 </div>
 
-                <!-- Secondary Charts (Moved above matrix) -->
+                <!-- Secondary Charts (Top Row) -->
                 <div class="charts-grid-secondary">
                     <div class="chart-box glass-panel">
-                        <h3>On-Demand Cost Breakdown</h3>
-                        <div class="canvas-wrapper">
+                        <h3 style="margin-bottom: 5px;">On-Demand Cost Breakdown</h3>
+                        <div class="canvas-wrapper uniform-canvas">
                             <canvas id="costPieChart"></canvas>
                         </div>
                     </div>
                     <div class="chart-box glass-panel compare-only">
-                        <h3 style="margin-bottom: 10px;">Strategy Radar</h3>
-                        <div class="canvas-wrapper" style="height: 380px;">
+                        <h3 style="margin-bottom: 5px;">Strategy Radar</h3>
+                        <div class="canvas-wrapper uniform-canvas">
                             <canvas id="radarChart"></canvas>
                         </div>
                     </div>
                     <div class="chart-box glass-panel">
-                        <h3 style="margin-bottom: 10px;">Category Bloom</h3>
-                        <div class="canvas-wrapper" style="height: 380px;">
+                        <h3 style="margin-bottom: 5px;">Category Bloom</h3>
+                        <div class="canvas-wrapper uniform-canvas">
                             <canvas id="polarChart"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- Master Visualization (Moved to bottom, taller) -->
-                <div class="chart-box glass-panel full-width main-viz-box compare-only" style="padding: 30px;">
-                    <div class="viz-header">
-                        <h3>Break-Even Strategy Matrix</h3>
+                <!-- Master Visualizations (Bottom Row) -->
+                <div class="charts-grid-half compare-only" style="margin-top: 24px;">
+                    <div class="chart-box glass-panel">
+                        <h3 style="margin-bottom: 5px;">Break-Even Strategy Matrix</h3>
+                        <div class="canvas-wrapper uniform-canvas">
+                            <canvas id="intersectionChart"></canvas>
+                        </div>
                     </div>
-                    <div class="canvas-wrapper" style="height: 600px;">
-                        <canvas id="intersectionChart"></canvas>
+                    <div class="chart-box glass-panel">
+                        <h3 style="margin-bottom: 5px;">LLM Value Constellation</h3>
+                        <div class="canvas-wrapper uniform-canvas">
+                            <canvas id="galaxyChart"></canvas>
+                        </div>
                     </div>
                 </div>
 

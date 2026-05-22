@@ -320,8 +320,11 @@ body.single-mode .charts-grid-secondary {
 
 /* Secondary Charts */
 .charts-grid-secondary { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+.charts-grid-half { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; }
 
-.chart-box { padding: 24px; display: flex; flex-direction: column; }
+.uniform-canvas { height: 400px !important; min-height: 400px !important; max-height: 400px !important; }
+
+.chart-box { padding: 20px; display: flex; flex-direction: column; }
 .chart-box h3 {
     font-family: var(--font-heading);
     font-size: 1.1rem;
